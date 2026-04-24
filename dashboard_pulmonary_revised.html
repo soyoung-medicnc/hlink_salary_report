@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>의사 구인 현황 분석 대시보드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f1419;
+      --bg-secondary: #1a1f2e;
+      --bg-tertiary: #252d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a9b8;
+      --border-color: #2d3748;
+      --accent: #00d4ff;
+      --accent-dark: #0099cc;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    .dashboard-container {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+    }
+
+    .dashboard-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #00d4ff, #0099cc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    /* Filter Info */
+    .filter-info {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 153, 204, 0.08));
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 32px;
+      backdrop-filter: blur(10px);
+    }
+
+    .filter-info p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin: 4px 0;
+    }
+
+    .filter-info strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(37, 45, 61, 0.6));
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid var(--accent);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 153, 204, 0.05));
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+    }
+
+    .kpi-card:hover::before {
+      opacity: 1;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Charts */
+    .charts-section {
+      margin-bottom: 40px;
+    }
+
+    .chart-panel {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.6), rgba(37, 45, 61, 0.4));
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-panel:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+    }
+
+    .chart-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-title::before {
+      content: '';
+      width: 4px;
+      height: 16px;
+      background: linear-gradient(180deg, var(--accent), rgba(0, 212, 255, 0.3));
+      border-radius: 2px;
+    }
+
+    .chart-container {
+      width: 100%;
+      border-radius: 8px;
+      overflow: visible;
+      background: transparent;
+      min-height: 500px;
+      margin-top: 20px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Summary */
+    .summary-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+    }
+
+    .summary-panel {
+      background: linear-gradient(135deg, rgba(26, 31, 46, 0.8), rgba(37, 45, 61, 0.6));
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .summary-panel:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      padding: 32px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 153, 204, 0.03));
+      border-top: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .footer p {
+      margin: 8px 0;
+    }
+
+
+    .summary-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-item {
+      background: rgba(0, 212, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .summary-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Loading & Error */
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-secondary);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-color);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-box {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-left: 4px solid #ef4444;
+      color: #fca5a5;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    /* Plotly Dark Theme */
+
+    @media (max-width: 768px) {
+      .dashboard-wrapper { padding: 20px 16px; }
+      .header h1 { font-size: 24px; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .summary-section { grid-template-columns: 1fr; }
+      .header-meta { gap: 16px; }
+    }
+  </style>
+<script>
+window.DASHBOARD_DATA = {"params":{"hospital":"전체","title":"호흡기내과","region_group":"전국","region_list":["서울","경기","인천","부산","대구","울산","경남","경북","제주"]},"periods":{"recent_label":"2026.01~03","prev1_label":"2025.01~03","recent_year":2026,"prev1_year":2025},"fig1":{"title":"2024~2026년 3개년 전국 호흡기내과 초빙수요","years":[2024,2025,2026],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":[{"year":2024,"months":["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],"values":[52,41,42,26,34,27,41,56,39,56,47,56]},{"year":2025,"months":["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],"values":[65,63,55,48,51,38,50,59,47,44,38,44]},{"year":2026,"months":["1월","2월","3월"],"values":[50,32,36]}]},"fig2":{"title":"전국 지역별 호흡기내과 초빙수요 - 병원규모별 비중","regions":["경기","인천","충북","서울","경북","부산","전북","충남","대전","대구","광주","강원","제주","전남","경남","울산"],"hospital_types":["종합병원","병원","요양병원","의원"],"hospital_colors":{"종합병원":"#0055ff","병원":"#00ddff","요양병원":"#ffaa00","의원":"#00ff88"},"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"경기|2025":{"종합병원":94.8,"병원":0,"요양병원":0,"의원":5.200000000000003},"인천|2025":{"종합병원":66.7,"병원":33.3,"요양병원":0,"의원":0},"충북|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"서울|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"경북|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"부산|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"전북|2025":{"종합병원":33.3,"병원":66.7,"요양병원":0,"의원":0},"충남|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"대전|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"대구|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"광주|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"강원|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"제주|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"전남|2025":{"종합병원":66.7,"병원":33.3,"요양병원":0,"의원":0},"경남|2025":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"울산|2025":{"종합병원":0,"병원":100,"요양병원":0,"의원":0},"경기|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"인천|2026":{"종합병원":81.8,"병원":18.2,"요양병원":0,"의원":0},"충북|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"서울|2026":{"종합병원":41.7,"병원":50,"요양병원":0,"의원":8.299999999999997},"경북|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"부산|2026":{"종합병원":92.9,"병원":7.1,"요양병원":0,"의원":0},"전북|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"충남|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"대전|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"대구|2026":{"종합병원":0,"병원":100,"요양병원":0,"의원":0},"광주|2026":{"종합병원":80,"병원":20,"요양병원":0,"의원":0},"강원|2026":{"종합병원":0,"병원":0,"요양병원":0,"의원":100},"제주|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"전남|2026":{"종합병원":100,"병원":0,"요양병원":0,"의원":0},"경남|2026":{"종합병원":33.3,"병원":66.7,"요양병원":0,"의원":0},"울산|2026":{"종합병원":0,"병원":0,"요양병원":0,"의원":100}},"prev1_year":2025,"recent_year":2026},"fig3":{"title":"호흡기내과 지역별 NET 평균 급여 비교","region_list":["강원","경기","경남","경북","광주","대구","대전","부산","서울","울산","인천","전남","전북","제주","충남","충북"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"강원":{"2025.01~03":{"salary":1955,"n":7},"2026.01~03":{"salary":0,"n":0}},"경기":{"2025.01~03":{"salary":2030,"n":58},"2026.01~03":{"salary":2018,"n":11}},"경남":{"2025.01~03":{"salary":2525,"n":1},"2026.01~03":{"salary":2092,"n":3}},"경북":{"2025.01~03":{"salary":1979,"n":14},"2026.01~03":{"salary":2072,"n":8}},"광주":{"2025.01~03":{"salary":2025,"n":2},"2026.01~03":{"salary":2005,"n":5}},"대구":{"2025.01~03":{"salary":2132,"n":7},"2026.01~03":{"salary":2325,"n":1}},"대전":{"2025.01~03":{"salary":1403,"n":4},"2026.01~03":{"salary":1736,"n":7}},"부산":{"2025.01~03":{"salary":1618,"n":8},"2026.01~03":{"salary":1869,"n":14}},"서울":{"2025.01~03":{"salary":1653,"n":11},"2026.01~03":{"salary":1961,"n":12}},"울산":{"2025.01~03":{"salary":2025,"n":1},"2026.01~03":{"salary":0,"n":0}},"인천":{"2025.01~03":{"salary":1954,"n":36},"2026.01~03":{"salary":1898,"n":22}},"전남":{"2025.01~03":{"salary":2158,"n":3},"2026.01~03":{"salary":1359,"n":2}},"전북":{"2025.01~03":{"salary":1878,"n":6},"2026.01~03":{"salary":2032,"n":10}},"제주":{"2025.01~03":{"salary":1686,"n":4},"2026.01~03":{"salary":1492,"n":2}},"충남":{"2025.01~03":{"salary":2261,"n":6},"2026.01~03":{"salary":1992,"n":6}},"충북":{"2025.01~03":{"salary":1939,"n":15},"2026.01~03":{"salary":1958,"n":13}}}},"fig3_capital":{"title":"수도권 종합병원 호흡기내과 NET 평균급여 비교","region_list":["서울","경기","인천"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"서울":{"2025.01~03":{"salary":1691,"n":10},"2026.01~03":{"salary":1960,"n":5}},"경기":{"2025.01~03":{"salary":2031,"n":54},"2026.01~03":{"salary":2018,"n":11}},"인천":{"2025.01~03":{"salary":1925,"n":24},"2026.01~03":{"salary":1931,"n":18}}}},"fig3_yeongnam":{"title":"영남권 종합병원 호흡기내과 NET 평균급여 비교","region_list":["부산","대구","울산","경남","경북"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"부산":{"2025.01~03":{"salary":1845,"n":5},"2026.01~03":{"salary":1857,"n":13}},"대구":{"2025.01~03":{"salary":2132,"n":7},"2026.01~03":{"salary":null,"n":0}},"울산":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"경남":{"2025.01~03":{"salary":2525,"n":1},"2026.01~03":{"salary":2225,"n":1}},"경북":{"2025.01~03":{"salary":1979,"n":14},"2026.01~03":{"salary":2072,"n":8}}}},"fig3_jeju":{"title":"제주 종합병원 호흡기내과 NET 평균 급여 비교","region_list":["제주"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"제주":{"2025.01~03":{"salary":1686,"n":4},"2026.01~03":{"salary":1492,"n":2}}}},"fig3_capital_clinic":{"title":"수도권 의원 호흡기내과 NET 평균급여 비교","region_list":["서울","경기","인천"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"서울":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"경기":{"2025.01~03":{"salary":1792,"n":3},"2026.01~03":{"salary":null,"n":0}},"인천":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}}}},"fig3_yeongnam_clinic":{"title":"영남권 의원 호흡기내과 NET 평균급여 비교","region_list":["부산","대구","울산","경남","경북"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"부산":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"대구":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"울산":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"경남":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"경북":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}}}},"fig3_jeju_clinic":{"title":"제주 의원 호흡기내과 NET 평균 급여 비교","region_list":["제주"],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"제주":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}}}},"fig4":{"title":"호흡기내과 월별 평균 NET 급여 추이","years":[2024,2025,2026],"color_palette":["#0055ff","#00ddff","#00ff88","#ffaa00","#ff3366","#9933ff"],"data":{"2024":[1903,1933,1921,1860,1939,1951,1931,1886,1847,1876,1857,1912],"2025":[1934,1949,1971,1968,1942,2002,1875,1940,1915,1977,1988,1888],"2026":[1933,1885,1977,2048,0,0,0,0,0,0,0,0]}},"demand_summary":["◆ 수도권 (서울, 경기, 인천)","서울은 ▼50%","경기는 ▼79.6%","인천은 ▼25%","◆ 영남권 (부산, 대구, 울산, 경남, 경북)","부산은 ▲160%","대구는 ▼100%","경남은 →0%","경북은 ▼42.9%","◆ 제주","제주는 ▼50%"],"salary_summary":{"서울":{"2025.01~03":{"salary":1691,"n":10},"2026.01~03":{"salary":1960,"n":5}},"경기":{"2025.01~03":{"salary":2031,"n":54},"2026.01~03":{"salary":2018,"n":11}},"인천":{"2025.01~03":{"salary":1925,"n":24},"2026.01~03":{"salary":1931,"n":18}},"부산":{"2025.01~03":{"salary":1845,"n":5},"2026.01~03":{"salary":1857,"n":13}},"대구":{"2025.01~03":{"salary":2132,"n":7},"2026.01~03":{"salary":null,"n":0}},"울산":{"2025.01~03":{"salary":null,"n":0},"2026.01~03":{"salary":null,"n":0}},"경남":{"2025.01~03":{"salary":2525,"n":1},"2026.01~03":{"salary":2225,"n":1}},"경북":{"2025.01~03":{"salary":1979,"n":14},"2026.01~03":{"salary":2072,"n":8}},"제주":{"2025.01~03":{"salary":1686,"n":4},"2026.01~03":{"salary":1492,"n":2}}}}
+</script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-wrapper">
+
+      <!-- HEADER -->
+      <header class="header">
+        <h1>📊 의사 구인 현황 분석</h1>
+        <div class="header-meta" id="header-meta"></div>
+      </header>
+
+      <!-- FILTER INFO -->
+      <div class="filter-info" id="filter-info" style="display:none;">
+        <p>분석 대상: <strong id="info-hospital"></strong> · <strong id="info-specialty"></strong> · <strong id="info-region"></strong></p>
+        <p>분석 기간: <strong id="info-period"></strong></p>
+      </div>
+
+      <!-- ERROR -->
+      <div class="error-box" id="error-box" style="display:none;"></div>
+
+      <!-- LOADING -->
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>분석 데이터를 로드 중입니다...</p>
+        <p style="font-size:12px; color:var(--text-secondary); margin-top:8px;">analysis_result.json 파일을 찾고 있습니다.</p>
+      </div>
+
+      <!-- KPI -->
+      <div class="kpi-grid" id="kpi-section" style="display:none;">
+        <div class="kpi-card">
+          <div class="kpi-label">분석 기간</div>
+          <div class="kpi-value" id="kpi-recent-period" style="font-size:16px;"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">비교 기간 (전년)</div>
+          <div class="kpi-value" id="kpi-prev-period" style="font-size:16px;"></div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <section class="charts-section" id="charts-section" style="display:none;">
+        <!-- Fig1 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig1-title"></div>
+          <div class="chart-container" id="chart-fig1"></div>
+        </div>
+
+        <!-- Fig2 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig2-title"></div>
+          <div class="chart-container" id="chart-fig2"></div>
+        </div>
+
+        <!-- Fig3-1: 수도권 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-1-title"></div>
+          <div class="chart-container" id="chart-fig3-1"></div>
+        </div>
+
+        <!-- Fig3-2: 영남권 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-2-title"></div>
+          <div class="chart-container" id="chart-fig3-2"></div>
+        </div>
+
+        <!-- Fig3-3: 제주 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-3-title"></div>
+          <div class="chart-container" id="chart-fig3-3"></div>
+        </div>
+
+        <!-- Fig3-1-2: 수도권 의원 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-1-2-title"></div>
+          <div class="chart-container" id="chart-fig3-1-2"></div>
+        </div>
+
+        <!-- Fig3-2-2: 영남권 의원 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-2-2-title"></div>
+          <div class="chart-container" id="chart-fig3-2-2"></div>
+        </div>
+
+        <!-- Fig3-3-2: 제주 의원 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig3-3-2-title"></div>
+          <div class="chart-container" id="chart-fig3-3-2"></div>
+        </div>
+
+        <!-- Fig4: 월별 NET 급여 추이 -->
+        <div class="chart-panel">
+          <div class="chart-title" id="fig4-title"></div>
+          <div class="chart-container" id="chart-fig4"></div>
+        </div>
+      </section>
+
+      <!-- SUMMARY -->
+      <section class="summary-section" id="summary-section" style="display:none;"></section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <p>※ 본 분석에 활용된 초빙 수요 및 급여 데이터는 메디게이트 초빙정보를 기반으로 산출되었습니다.</p>
+        <p>※ 복수의 전문과목을 채용하는 공고의 경우, 각 과목별로 개별 집계하였습니다.</p>
+        <p style="margin-left: 16px;">- 예시: 내과, 가정의학과를 동시에 채용하는 경우, 각 과목별로 개별 집계하였습니다.</p>
+        <p>※ 전문의 봉직 급여 분석을 전제로 하기 위해 월 기준 NET 1,000만원 미만의 데이터와 통계적 이상치는 제외하였습니다.</p>
+        <p>※ 일부 데이터는 조건별 샘플 수에 따라 체감 연봉과 차이를 보일 수 있습니다.</p>
+      </footer>
+
+    </div>
+  </div>
+
+  <script>
+    let ANALYSIS_DATA = null;
+
+    // 천 단위 콤마 추가 함수
+    function formatNumber(num) {
+      if (!num && num !== 0) return '—';
+      return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function loadAnalysis() {
+      try {
+        if (typeof window.DASHBOARD_DATA !== 'undefined' && window.DASHBOARD_DATA) {
+          ANALYSIS_DATA = window.DASHBOARD_DATA;
+          renderDashboard();
+        } else {
+          showError('데이터를 로드할 수 없습니다.');
+        }
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      const errorBox = document.getElementById('error-box');
+      errorBox.textContent = '❌ ' + message;
+      errorBox.style.display = 'block';
+    }
+
+    function renderDashboard() {
+      const data = ANALYSIS_DATA;
+
+      // [수정] fig3을 fig3_capital로 설정 (renderSummary에서 사용)
+      if (data.fig3_capital && !data.fig3) {
+        data.fig3 = data.fig3_capital;
+      }
+
+      // Header Meta
+      const headerMeta = document.getElementById('header-meta');
+      headerMeta.innerHTML = `
+        <div class="meta-item">
+          <span class="meta-label">기관유형</span>
+          <span class="meta-value">${data.params.hospital}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">초빙과목</span>
+          <span class="meta-value">${data.params.title}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">지역</span>
+          <span class="meta-value">${data.params.region_group}</span>
+        </div>
+      `;
+
+      // Filter Info
+      document.getElementById('info-hospital').textContent = data.params.hospital;
+      document.getElementById('info-specialty').textContent = data.params.title;
+      document.getElementById('info-region').textContent = data.params.region_group;
+      document.getElementById('info-period').textContent = `${data.periods.recent_label} vs ${data.periods.prev1_label}`;
+      document.getElementById('filter-info').style.display = 'block';
+
+      // KPI
+      document.getElementById('kpi-recent-period').textContent = data.periods.recent_label;
+      document.getElementById('kpi-prev-period').textContent = data.periods.prev1_label;
+
+      // Charts
+      renderFig1(data.fig1);
+      renderFig2(data.fig2);
+
+      // [수정] 새로운 Fig3들과 Fig4 렌더링 (기존 renderFig3 제거)
+      if (data.fig3_capital) renderFig3Capital(data.fig3_capital);
+      if (data.fig3_yeongnam) renderFig3Yeongnam(data.fig3_yeongnam);
+      if (data.fig3_jeju) renderFig3Jeju(data.fig3_jeju);
+      if (data.fig3_capital_clinic) renderFig3CapitalClinic(data.fig3_capital_clinic);
+      if (data.fig3_yeongnam_clinic) renderFig3YeongnamClinic(data.fig3_yeongnam_clinic);
+      if (data.fig3_jeju_clinic) renderFig3JejuClinic(data.fig3_jeju_clinic);
+      if (data.fig4) renderFig4(data.fig4);
+
+      // Summary
+      renderSummary(data);
+
+      // Show content
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('kpi-section').style.display = 'grid';
+      document.getElementById('charts-section').style.display = 'block';
+      document.getElementById('summary-section').style.display = 'grid';
+    }
+
+    function renderFig1(fig1Data) {
+      const traces = [];
+      const colorPalette = fig1Data.color_palette;
+
+      fig1Data.data.forEach((yearData, idx) => {
+        // 2026년 4월 이후 데이터 제거
+        const months = [];
+        const values = [];
+        yearData.months.forEach((month, i) => {
+          if (yearData.year === 2026 && parseInt(month) > 3) {
+            return; // 스킵
+          }
+          months.push(month);
+          values.push(yearData.values[i]);
+        });
+
+        traces.push({
+          x: months,
+          y: values,
+          mode: 'lines+markers',
+          name: yearData.year + '년',
+          line: { color: colorPalette[idx % colorPalette.length], width: 3 },
+          marker: { size: 6 }
+        });
+      });
+
+      // 색상 적용
+      const coloredTraces = traces.map((trace, i) => ({
+        ...trace,
+        line: { color: colorPalette[i % colorPalette.length], width: 3 }
+      }));
+
+      const layout = {
+        title: { text: fig1Data.title, font: { color: '#ffffff', size: 18 } },
+        xaxis: { showgrid: true, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', gridcolor: 'rgba(0, 212, 255, 0.1)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        showlegend: true,
+        legend: { orientation: 'h', x: 0.5, y: -0.18, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig1', coloredTraces, layout, {responsive: true});
+      document.getElementById('fig1-title').textContent = fig1Data.title;
+    }
+
+    function renderFig2(fig2Data) {
+      const traces = [];
+      const regions = fig2Data.regions;
+      const colors = fig2Data.hospital_colors;
+
+      // MultiIndex 방식: 지역 × 연도
+      const xLevel1 = []; // 지역
+      const xLevel2 = []; // 연도
+      regions.forEach(r => {
+        xLevel1.push(r, r);
+        xLevel2.push(fig2Data.prev1_year, fig2Data.recent_year);
+      });
+
+      // 각 병원 유형별로 trace 생성 (100% stacked)
+      for (const htype of fig2Data.hospital_types) {
+        const yValues = [];
+        const textValues = [];
+
+        regions.forEach(region => {
+          // 2025년
+          const key_2025 = `${region}|${fig2Data.prev1_year}`;
+          const val_2025 = fig2Data.data[key_2025] && fig2Data.data[key_2025][htype]
+            ? parseFloat(fig2Data.data[key_2025][htype])
+            : 0;
+          yValues.push(val_2025);
+          textValues.push(val_2025 > 2 ? val_2025.toFixed(1) + '%' : '');
+
+          // 2026년
+          const key_2026 = `${region}|${fig2Data.recent_year}`;
+          const val_2026 = fig2Data.data[key_2026] && fig2Data.data[key_2026][htype]
+            ? parseFloat(fig2Data.data[key_2026][htype])
+            : 0;
+          yValues.push(val_2026);
+          textValues.push(val_2026 > 2 ? val_2026.toFixed(1) + '%' : '');
+        });
+
+        traces.push({
+          x: [xLevel1, xLevel2],
+          y: yValues,
+          name: htype,
+          type: 'bar',
+          marker: { color: colors[htype] },
+          text: textValues,
+          textposition: 'inside',
+          textfont: { color: '#ffffff', size: 13 },
+          hovertemplate: '%{x[0]}<br>%{x[1]}: %{y:.1f}%<extra></extra>'
+        });
+      }
+
+      const layout = {
+        title: { text: fig2Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 14, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showseparators: false },
+        yaxis: { title: '비중 (%)', titlefont: { color: '#a0a9b8' }, showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', range: [0, 100], showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'stack',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.22, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig2', traces, layout, {responsive: true});
+      document.getElementById('fig2-title').textContent = fig2Data.title;
+    }
+
+    function renderFig3(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = fig3Data.region_list;
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3', traces, layout, {responsive: true});
+      document.getElementById('fig3-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-1: 수도권
+    function renderFig3Capital(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = ['서울', '경기', '인천'];
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-1', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-1'), 0);
+      document.getElementById('fig3-1-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-2: 영남권
+    function renderFig3Yeongnam(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = ['부산', '대구', '울산', '경남', '경북'];
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-2', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-2'), 0);
+      document.getElementById('fig3-2-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-3: 제주
+    function renderFig3Jeju(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = ['제주'];
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const hasData = prev_values.some(v => v > 0) || recent_values.some(v => v > 0);
+
+      if (!hasData) {
+        document.getElementById('fig3-3-title').textContent = fig3Data.title;
+        document.getElementById('chart-fig3-3').innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 500px; font-size: 18px; color: #666; font-family: \'Noto Sans KR\', sans-serif;">조건에 부합하는 데이터가 없습니다.</div>';
+        return;
+      }
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-3', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-3'), 0);
+      document.getElementById('fig3-3-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-1-2: 수도권 의원
+    function renderFig3CapitalClinic(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = fig3Data.region_list;
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-1-2', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-1-2'), 0);
+      document.getElementById('fig3-1-2-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-2-2: 영남권 의원
+    function renderFig3YeongnamClinic(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = fig3Data.region_list;
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-2-2', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-2-2'), 0);
+      document.getElementById('fig3-2-2-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig3-3-2: 제주 의원
+    function renderFig3JejuClinic(fig3Data) {
+      const colorPalette = fig3Data.color_palette;
+      const regions = ['제주'];
+      const prev_values = [];
+      const recent_values = [];
+      const prev_labels = [];
+      const recent_labels = [];
+
+      regions.forEach(region => {
+        if (fig3Data.data[region]) {
+          const periods = Object.keys(fig3Data.data[region]).sort();
+          if (periods.length >= 2) {
+            const prev_d = fig3Data.data[region][periods[0]];
+            const recent_d = fig3Data.data[region][periods[1]];
+
+            prev_values.push(prev_d ? prev_d.salary : 0);
+            recent_values.push(recent_d ? recent_d.salary : 0);
+            prev_labels.push(prev_d ? `(N=${prev_d.n})` : '');
+            recent_labels.push(recent_d ? `(N=${recent_d.n})` : '');
+          }
+        }
+      });
+
+      const hasData = prev_values.some(v => v > 0) || recent_values.some(v => v > 0);
+
+      if (!hasData) {
+        document.getElementById('fig3-3-2-title').textContent = fig3Data.title;
+        document.getElementById('chart-fig3-3-2').innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 500px; font-size: 18px; color: #666; font-family: \'Noto Sans KR\', sans-serif;">조건에 부합하는 데이터가 없습니다.</div>';
+        return;
+      }
+
+      const traces = [
+        {
+          x: regions,
+          y: prev_values,
+          name: '2025년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[0] },
+          text: prev_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + prev_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: prev_labels
+        },
+        {
+          x: regions,
+          y: recent_values,
+          name: '2026년 1~3월',
+          type: 'bar',
+          marker: { color: colorPalette[1] },
+          text: recent_values.map((v, i) => v > 0 ? formatNumber(v) + '만원<br>' + recent_labels[i] : ''),
+          textposition: 'inside',
+          textfont: { color: 'white', size: 16 },
+          hovertemplate: '%{x}<br>%{y:,.0f}만원 %{customdata}<extra></extra>',
+          customdata: recent_labels
+        }
+      ];
+
+      const layout = {
+        title: { text: fig3Data.title, font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 16, color: '#a0a9b8' },
+        xaxis: { showgrid: false, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, categoryorder: 'array', categoryarray: regions, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: '', showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, layer: 'above traces', showticklabels: true, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        barmode: 'group',
+        margin: { t: 60, b: 40, l: 50, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.28, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig3-3-2', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig3-3-2'), 0);
+      document.getElementById('fig3-3-2-title').textContent = fig3Data.title;
+    }
+
+    // [추가] Fig4: 월별 NET 급여 추이
+    function renderFig4(fig4Data) {
+      const traces = [];
+      const colorPalette = fig4Data.color_palette;
+      const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+
+      fig4Data.years.forEach((year, idx) => {
+        const values = [];
+        fig4Data.data[year].forEach((val, monthIdx) => {
+          if (year === 2026 && monthIdx > 2) {
+            values.push(null);
+          } else {
+            values.push(val || null);
+          }
+        });
+
+        traces.push({
+          x: months,
+          y: values,
+          name: year + '년',
+          type: 'scatter',
+          mode: 'lines+markers',
+          line: { color: colorPalette[idx], width: 2 },
+          marker: { size: 6 },
+          connectgaps: false,
+          hovertemplate: '%{x}<br>%{y:,.0f}만원<extra></extra>'
+        });
+      });
+
+      const layout = {
+        title: { text: '월별 평균 NET 급여 추이', font: { color: '#ffffff', size: 18 } },
+        plot_bgcolor: 'rgba(26, 31, 46, 0.5)',
+        paper_bgcolor: 'transparent',
+        font: { family: 'Noto Sans KR, sans-serif', size: 14, color: '#a0a9b8' },
+        xaxis: { showgrid: true, showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, gridcolor: 'rgba(0, 212, 255, 0.1)', tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        yaxis: { title: 'NET 급여 (만원)', titlefont: { color: '#a0a9b8' }, showgrid: true, gridcolor: 'rgba(0, 212, 255, 0.1)', showline: true, linecolor: 'rgba(0, 212, 255, 0.2)', linewidth: 1, tickcolor: 'rgba(160, 169, 184, 0.5)' },
+        margin: { t: 60, b: 60, l: 80, r: 50 },
+        height: 500,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: -0.2, xanchor: 'center', bgcolor: 'rgba(26, 31, 46, 0.7)', bordercolor: 'rgba(0, 212, 255, 0.2)', borderwidth: 1 }
+      };
+
+      Plotly.newPlot('chart-fig4', traces, layout, {responsive: true});
+      setTimeout(() => Plotly.Plots.resize('chart-fig4'), 0);
+      document.getElementById('fig4-title').textContent = fig4Data.title;
+    }
+
+    function renderSummary(data) {
+      const section = document.getElementById('summary-section');
+      section.innerHTML = '';
+
+      // 수요 요약 (종합병원 기준)
+      const demandPanel = document.createElement('div');
+      demandPanel.className = 'summary-panel';
+      let demandHtml = '<div class="summary-title">🎯 초빙 수요 (2개년 비교)</div>';
+
+      if (data.demand_summary && data.demand_summary.length > 0) {
+        for (const summary of data.demand_summary) {
+          console.log('[DEBUG] demand_summary item:', summary);
+          if (summary.startsWith('◆')) {
+            // 지역 그룹 헤더
+            demandHtml += `<div style="font-weight: bold; margin-top: 12px; margin-bottom: 6px; font-size: 14px; color: #666;">${summary}</div>`;
+          } else if (summary.includes('은') || summary.includes('는')) {
+            // 지역 데이터 (예: "서울은 ▲21.9%")
+            const particle = summary.includes('은') ? '은' : '는';
+            const parts = summary.split(particle);
+            if (parts.length === 2) {
+              const region = parts[0].trim();
+              const remaining = parts[1].trim();
+              const match = remaining.match(/(▲|▼|→)([\d.]+)%/);
+              console.log('[DEBUG] Regex match result for remaining:', match);
+              if (match) {
+                const arrow = match[1];
+                const percent = match[2];
+                let description = '';
+                if (arrow === '▲') {
+                  description = `2025년 1~3월 대비 2026년 1~3월 ${percent}% 증가`;
+                } else if (arrow === '▼') {
+                  description = `2025년 1~3월 대비 2026년 1~3월 ${percent}% 감소`;
+                } else {
+                  description = `2025년 1~3월 대비 2026년 1~3월 변화 없음`;
+                }
+                demandHtml += `<div class="summary-item"><strong>${region}${particle}</strong> ${description}</div>`;
+              }
+            }
+          }
+        }
+      }
+
+      demandPanel.innerHTML = demandHtml;
+      section.appendChild(demandPanel);
+
+      // 급여 요약
+      function getParticleHtml(word) {
+        const lastChar = word.charAt(word.length - 1);
+        const charCode = lastChar.charCodeAt(0);
+        if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+          return ((charCode - 0xAC00) % 28) !== 0 ? '은' : '는';
+        }
+        return '은';
+      }
+
+      function formatPeriodKor(period) {
+        // "2025.01~03" -> "2025년 1~3월"
+        const match = period.match(/(\d{4})\.(\d{2})~(\d{2})/);
+        if (match) {
+          const year = match[1];
+          const month1 = parseInt(match[2]);
+          const month2 = parseInt(match[3]);
+          return `${year}년 ${month1}~${month2}월`;
+        }
+        return period;
+      }
+
+      function formatSalaryNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function renderSalarySection(salaryData, sectionTitle) {
+        const salaryPanel = document.createElement('div');
+        salaryPanel.className = 'summary-panel';
+        let salaryHtml = `<div class="summary-title">💰 ${sectionTitle}</div>`;
+
+        for (const region of data.params.region_list) {
+          if (salaryData && salaryData[region]) {
+            const periods = Object.keys(salaryData[region]).sort();
+            if (periods.length >= 2) {
+              const prev_d = salaryData[region][periods[0]];
+              const curr_d = salaryData[region][periods[1]];
+
+              if (prev_d.salary === null || curr_d.salary === null) {
+                const particle = getParticleHtml(region);
+                let line = `<strong>${region}${particle}</strong> 조건에 부합하는 데이터가 없습니다.`;
+                salaryHtml += `<div class="summary-item">${line}</div>`;
+              } else {
+                const prevWarning = prev_d.n < 10 ? ' ⚠️' : prev_d.n < 30 ? ' △' : '';
+                const currWarning = curr_d.n < 10 ? ' ⚠️' : curr_d.n < 30 ? ' △' : '';
+
+                const yoy = (((curr_d.salary - prev_d.salary) / prev_d.salary) * 100);
+                const yoyRounded = Math.round(yoy);
+                const yoyAbs = Math.abs(yoy);
+                const yoyAbsInt = Math.abs(yoyRounded);
+
+                let statusText = '';
+                if (yoy > 0.5) {
+                  statusText = `전년 동기대비 약 ${yoyAbsInt}% 상승했습니다.`;
+                } else if (yoy < -0.5) {
+                  statusText = `전년 동기대비 약 ${yoyAbsInt}% 하락했습니다.`;
+                } else {
+                  statusText = `전년 동기대비 소폭 ${yoy > 0 ? '상승' : '하락'}했습니다.`;
+                }
+
+                const particle = getParticleHtml(region);
+                const prevPeriodKor = formatPeriodKor(periods[0]);
+                const currPeriodKor = formatPeriodKor(periods[1]);
+                const prevSalaryFormatted = formatSalaryNumber(prev_d.salary);
+                const currSalaryFormatted = formatSalaryNumber(curr_d.salary);
+
+                let line = `<strong>${region}${particle}</strong> ${prevPeriodKor} ${prevSalaryFormatted}만원(N=${prev_d.n}${prevWarning})→${currPeriodKor} ${currSalaryFormatted}만원(N=${curr_d.n}${currWarning})으로 ${statusText}`;
+                salaryHtml += `<div class="summary-item">${line}</div>`;
+              }
+            }
+          }
+        }
+
+        salaryHtml += `<div style="font-size: 13px; color: #888; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">△ 참고용 (표본 수 30 미만), ⚠️ 표본 부족 (표본 수 10 미만)</div>`;
+
+        salaryPanel.innerHTML = salaryHtml;
+        section.appendChild(salaryPanel);
+      }
+
+      // 종합병원 급여 현황
+      if (data.salary_summary_clinic) {
+        renderSalarySection(data.salary_summary, '급여현황(종합병원)');
+        renderSalarySection(data.salary_summary_clinic, '급여현황(의원)');
+      } else {
+        const salaryPanel = document.createElement('div');
+        salaryPanel.className = 'summary-panel';
+        let salaryHtml = '<div class="summary-title">💰 급여 현황</div>';
+
+        for (const region of data.params.region_list) {
+          if (data.salary_summary && data.salary_summary[region]) {
+            const periods = Object.keys(data.salary_summary[region]).sort();
+            if (periods.length >= 2) {
+              const prev_d = data.salary_summary[region][periods[0]];
+              const curr_d = data.salary_summary[region][periods[1]];
+
+              if (prev_d.salary === null || curr_d.salary === null) {
+                const particle = getParticleHtml(region);
+                let line = `<strong>${region}${particle}</strong> 조건에 부합하는 데이터가 없습니다.`;
+                salaryHtml += `<div class="summary-item">${line}</div>`;
+              } else {
+                const prevWarning = prev_d.n < 10 ? ' ⚠️' : prev_d.n < 30 ? ' △' : '';
+                const currWarning = curr_d.n < 10 ? ' ⚠️' : curr_d.n < 30 ? ' △' : '';
+
+                const yoy = (((curr_d.salary - prev_d.salary) / prev_d.salary) * 100);
+                const yoyRounded = Math.round(yoy);
+                const yoyAbs = Math.abs(yoy);
+                const yoyAbsInt = Math.abs(yoyRounded);
+
+                let statusText = '';
+                if (yoy > 0.5) {
+                  statusText = `전년 동기대비 약 ${yoyAbsInt}% 상승했습니다.`;
+                } else if (yoy < -0.5) {
+                  statusText = `전년 동기대비 약 ${yoyAbsInt}% 하락했습니다.`;
+                } else {
+                  statusText = `전년 동기대비 소폭 ${yoy > 0 ? '상승' : '하락'}했습니다.`;
+                }
+
+                const particle = getParticleHtml(region);
+                const prevPeriodKor = formatPeriodKor(periods[0]);
+                const currPeriodKor = formatPeriodKor(periods[1]);
+                const prevSalaryFormatted = formatSalaryNumber(prev_d.salary);
+                const currSalaryFormatted = formatSalaryNumber(curr_d.salary);
+
+                let line = `<strong>${region}${particle}</strong> ${prevPeriodKor} ${prevSalaryFormatted}만원(N=${prev_d.n}${prevWarning})→${currPeriodKor} ${currSalaryFormatted}만원(N=${curr_d.n}${currWarning})으로 ${statusText}`;
+                salaryHtml += `<div class="summary-item">${line}</div>`;
+              }
+            }
+          }
+        }
+
+        salaryHtml += `<div style="font-size: 13px; color: #888; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">△ 참고용 (표본 수 30 미만), ⚠️ 표본 부족 (표본 수 10 미만)</div>`;
+
+        salaryPanel.innerHTML = salaryHtml;
+        section.appendChild(salaryPanel);
+      }
+    }
+
+    window.addEventListener('load', function() {
+      loadAnalysis();
+      // 초기 렌더링 후 약간의 지연 후 그래프 리사이즈
+      setTimeout(() => {
+        Plotly.Plots.resize('chart-fig1');
+        Plotly.Plots.resize('chart-fig2');
+        Plotly.Plots.resize('chart-fig3');
+        Plotly.Plots.resize('chart-fig3-1');
+        Plotly.Plots.resize('chart-fig3-2');
+        Plotly.Plots.resize('chart-fig3-3');
+        Plotly.Plots.resize('chart-fig3-1-2');
+        Plotly.Plots.resize('chart-fig3-2-2');
+        Plotly.Plots.resize('chart-fig3-3-2');
+        Plotly.Plots.resize('chart-fig4');
+      }, 100);
+    });
+
+    // 창 크기 변경시 그래프 리사이즈
+    window.addEventListener('resize', () => {
+      Plotly.Plots.resize('chart-fig1');
+      Plotly.Plots.resize('chart-fig2');
+      Plotly.Plots.resize('chart-fig3');
+      Plotly.Plots.resize('chart-fig3-1');
+      Plotly.Plots.resize('chart-fig3-2');
+      Plotly.Plots.resize('chart-fig3-3');
+      Plotly.Plots.resize('chart-fig3-1-2');
+      Plotly.Plots.resize('chart-fig3-2-2');
+      Plotly.Plots.resize('chart-fig3-3-2');
+      Plotly.Plots.resize('chart-fig4');
+    });
+  </script>
+</body>
+</html>
