@@ -1,0 +1,79 @@
+# 한글 명칭 ↔ 영문 슬러그(파일명) 매핑
+# 새 리포트에 등록되지 않은 명칭이 나오면 extract.py 가 실패합니다. 여기에 추가한 뒤 다시 실행하세요.
+
+specialties:
+  안과: ophthalmology
+  호흡기내과: pulmonology
+  내과: internal-medicine
+  가정의학과: family-medicine
+  소화기내과: gastroenterology
+  순환기내과: cardiology
+  내분비내과: endocrinology
+  신장내과: nephrology
+  감염내과: infectious-disease
+  혈액종양내과: hematology-oncology
+  류마티스내과: rheumatology
+  외과: general-surgery
+  정형외과: orthopedics
+  신경외과: neurosurgery
+  흉부외과: thoracic-surgery
+  성형외과: plastic-surgery
+  산부인과: obstetrics-gynecology
+  소아청소년과: pediatrics
+  이비인후과: otolaryngology
+  피부과: dermatology
+  비뇨의학과: urology
+  신경과: neurology
+  정신건강의학과: psychiatry
+  재활의학과: rehabilitation-medicine
+  마취통증의학과: anesthesiology
+  영상의학과: radiology
+  진단검사의학과: laboratory-medicine
+  병리과: pathology
+  방사선종양학과: radiation-oncology
+  핵의학과: nuclear-medicine
+  응급의학과: emergency-medicine
+  직업환경의학과: occupational-medicine
+  예방의학과: preventive-medicine
+  일반의: general-practitioner
+
+regions:
+  서울: seoul
+  부산: busan
+  대구: daegu
+  인천: incheon
+  광주: gwangju
+  대전: daejeon
+  울산: ulsan
+  세종: sejong
+  경기: gyeonggi
+  강원: gangwon
+  충북: chungbuk
+  충남: chungnam
+  전북: jeonbuk
+  전남: jeonnam
+  경북: gyeongbuk
+  경남: gyeongnam
+  제주: jeju
+
+# 대시보드의 권역 구분 (fig3_<key>, demand_summary 의 ◆ 헤더)
+region_groups:
+  capital-area:
+    name: 수도권
+    fig_key: capital
+    regions: [서울, 경기, 인천]
+  yeongnam-area:
+    name: 영남권
+    fig_key: yeongnam
+    regions: [부산, 대구, 울산, 경남, 경북]
+  jeju-area:
+    name: 제주권
+    aliases: [제주]
+    fig_key: jeju
+    regions: [제주]
+
+hospital_types:
+  종합병원: general-hospital
+  병원: hospital
+  요양병원: nursing-hospital
+  의원: clinic

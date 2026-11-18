@@ -1,0 +1,1277 @@
+{
+ "schema_version": 1,
+ "report_id": "pulmonology-2026q1",
+ "source": {
+  "file": "raw/dashboards/pulmonology_2026q1.html",
+  "sha256": "076bc9ace865b1928cfab240ff7a0c610d2b897df9246458128df7a314351bc7",
+  "has_clinic_summary": false
+ },
+ "specialty": {
+  "name": "호흡기내과",
+  "slug": "pulmonology"
+ },
+ "filters": {
+  "hospital": "전체",
+  "region_group": "전국"
+ },
+ "period": {
+  "recent": {
+   "label": "2026.01~03",
+   "label_ko": "2026년 1~3월",
+   "year": 2026,
+   "start_month": 1,
+   "end_month": 3,
+   "slug": "2026q1"
+  },
+  "prev": {
+   "label": "2025.01~03",
+   "label_ko": "2025년 1~3월",
+   "year": 2025,
+   "start_month": 1,
+   "end_month": 3,
+   "slug": "2025q1"
+  }
+ },
+ "demand_monthly": [
+  {
+   "year": 2024,
+   "month": 1,
+   "count": 52
+  },
+  {
+   "year": 2024,
+   "month": 2,
+   "count": 41
+  },
+  {
+   "year": 2024,
+   "month": 3,
+   "count": 42
+  },
+  {
+   "year": 2024,
+   "month": 4,
+   "count": 26
+  },
+  {
+   "year": 2024,
+   "month": 5,
+   "count": 34
+  },
+  {
+   "year": 2024,
+   "month": 6,
+   "count": 27
+  },
+  {
+   "year": 2024,
+   "month": 7,
+   "count": 41
+  },
+  {
+   "year": 2024,
+   "month": 8,
+   "count": 56
+  },
+  {
+   "year": 2024,
+   "month": 9,
+   "count": 39
+  },
+  {
+   "year": 2024,
+   "month": 10,
+   "count": 56
+  },
+  {
+   "year": 2024,
+   "month": 11,
+   "count": 47
+  },
+  {
+   "year": 2024,
+   "month": 12,
+   "count": 56
+  },
+  {
+   "year": 2025,
+   "month": 1,
+   "count": 65
+  },
+  {
+   "year": 2025,
+   "month": 2,
+   "count": 63
+  },
+  {
+   "year": 2025,
+   "month": 3,
+   "count": 55
+  },
+  {
+   "year": 2025,
+   "month": 4,
+   "count": 48
+  },
+  {
+   "year": 2025,
+   "month": 5,
+   "count": 51
+  },
+  {
+   "year": 2025,
+   "month": 6,
+   "count": 38
+  },
+  {
+   "year": 2025,
+   "month": 7,
+   "count": 50
+  },
+  {
+   "year": 2025,
+   "month": 8,
+   "count": 59
+  },
+  {
+   "year": 2025,
+   "month": 9,
+   "count": 47
+  },
+  {
+   "year": 2025,
+   "month": 10,
+   "count": 44
+  },
+  {
+   "year": 2025,
+   "month": 11,
+   "count": 38
+  },
+  {
+   "year": 2025,
+   "month": 12,
+   "count": 44
+  },
+  {
+   "year": 2026,
+   "month": 1,
+   "count": 50
+  },
+  {
+   "year": 2026,
+   "month": 2,
+   "count": 32
+  },
+  {
+   "year": 2026,
+   "month": 3,
+   "count": 36
+  }
+ ],
+ "demand_mix": [
+  {
+   "region": "부산",
+   "region_slug": "busan",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "부산",
+   "region_slug": "busan",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 92.9,
+    "hospital": 7.1,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "충북",
+   "region_slug": "chungbuk",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "충북",
+   "region_slug": "chungbuk",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "충남",
+   "region_slug": "chungnam",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "충남",
+   "region_slug": "chungnam",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "대구",
+   "region_slug": "daegu",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "대구",
+   "region_slug": "daegu",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 0,
+    "hospital": 100,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "대전",
+   "region_slug": "daejeon",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "대전",
+   "region_slug": "daejeon",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "강원",
+   "region_slug": "gangwon",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "강원",
+   "region_slug": "gangwon",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 0,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 100
+   }
+  },
+  {
+   "region": "광주",
+   "region_slug": "gwangju",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "광주",
+   "region_slug": "gwangju",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 80,
+    "hospital": 20,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 94.8,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 5.200000000000003
+   }
+  },
+  {
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 33.3,
+    "hospital": 66.7,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "인천",
+   "region_slug": "incheon",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 66.7,
+    "hospital": 33.3,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "인천",
+   "region_slug": "incheon",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 81.8,
+    "hospital": 18.2,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "제주",
+   "region_slug": "jeju",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "제주",
+   "region_slug": "jeju",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "전북",
+   "region_slug": "jeonbuk",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 33.3,
+    "hospital": 66.7,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "전북",
+   "region_slug": "jeonbuk",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "전남",
+   "region_slug": "jeonnam",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 66.7,
+    "hospital": 33.3,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "전남",
+   "region_slug": "jeonnam",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "서울",
+   "region_slug": "seoul",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 100,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "서울",
+   "region_slug": "seoul",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 41.7,
+    "hospital": 50,
+    "nursing-hospital": 0,
+    "clinic": 8.299999999999997
+   }
+  },
+  {
+   "region": "울산",
+   "region_slug": "ulsan",
+   "year": 2025,
+   "shares": {
+    "general-hospital": 0,
+    "hospital": 100,
+    "nursing-hospital": 0,
+    "clinic": 0
+   }
+  },
+  {
+   "region": "울산",
+   "region_slug": "ulsan",
+   "year": 2026,
+   "shares": {
+    "general-hospital": 0,
+    "hospital": 0,
+    "nursing-hospital": 0,
+    "clinic": 100
+   }
+  }
+ ],
+ "salary_by_region": [
+  {
+   "region": "강원",
+   "region_slug": "gangwon",
+   "period": "prev",
+   "salary": 1955,
+   "n": 7
+  },
+  {
+   "region": "강원",
+   "region_slug": "gangwon",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "prev",
+   "salary": 2030,
+   "n": 58
+  },
+  {
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "recent",
+   "salary": 2018,
+   "n": 11
+  },
+  {
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "prev",
+   "salary": 2525,
+   "n": 1
+  },
+  {
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "recent",
+   "salary": 2092,
+   "n": 3
+  },
+  {
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "prev",
+   "salary": 1979,
+   "n": 14
+  },
+  {
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "recent",
+   "salary": 2072,
+   "n": 8
+  },
+  {
+   "region": "광주",
+   "region_slug": "gwangju",
+   "period": "prev",
+   "salary": 2025,
+   "n": 2
+  },
+  {
+   "region": "광주",
+   "region_slug": "gwangju",
+   "period": "recent",
+   "salary": 2005,
+   "n": 5
+  },
+  {
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "prev",
+   "salary": 2132,
+   "n": 7
+  },
+  {
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "recent",
+   "salary": 2325,
+   "n": 1
+  },
+  {
+   "region": "대전",
+   "region_slug": "daejeon",
+   "period": "prev",
+   "salary": 1403,
+   "n": 4
+  },
+  {
+   "region": "대전",
+   "region_slug": "daejeon",
+   "period": "recent",
+   "salary": 1736,
+   "n": 7
+  },
+  {
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "prev",
+   "salary": 1618,
+   "n": 8
+  },
+  {
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "recent",
+   "salary": 1869,
+   "n": 14
+  },
+  {
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "prev",
+   "salary": 1653,
+   "n": 11
+  },
+  {
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "recent",
+   "salary": 1961,
+   "n": 12
+  },
+  {
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "prev",
+   "salary": 2025,
+   "n": 1
+  },
+  {
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "prev",
+   "salary": 1954,
+   "n": 36
+  },
+  {
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "recent",
+   "salary": 1898,
+   "n": 22
+  },
+  {
+   "region": "전남",
+   "region_slug": "jeonnam",
+   "period": "prev",
+   "salary": 2158,
+   "n": 3
+  },
+  {
+   "region": "전남",
+   "region_slug": "jeonnam",
+   "period": "recent",
+   "salary": 1359,
+   "n": 2
+  },
+  {
+   "region": "전북",
+   "region_slug": "jeonbuk",
+   "period": "prev",
+   "salary": 1878,
+   "n": 6
+  },
+  {
+   "region": "전북",
+   "region_slug": "jeonbuk",
+   "period": "recent",
+   "salary": 2032,
+   "n": 10
+  },
+  {
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "prev",
+   "salary": 1686,
+   "n": 4
+  },
+  {
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "recent",
+   "salary": 1492,
+   "n": 2
+  },
+  {
+   "region": "충남",
+   "region_slug": "chungnam",
+   "period": "prev",
+   "salary": 2261,
+   "n": 6
+  },
+  {
+   "region": "충남",
+   "region_slug": "chungnam",
+   "period": "recent",
+   "salary": 1992,
+   "n": 6
+  },
+  {
+   "region": "충북",
+   "region_slug": "chungbuk",
+   "period": "prev",
+   "salary": 1939,
+   "n": 15
+  },
+  {
+   "region": "충북",
+   "region_slug": "chungbuk",
+   "period": "recent",
+   "salary": 1958,
+   "n": 13
+  }
+ ],
+ "salary_by_group": [
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "prev",
+   "salary": 1691,
+   "n": 10
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "recent",
+   "salary": 1960,
+   "n": 5
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "prev",
+   "salary": 2031,
+   "n": 54
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "recent",
+   "salary": 2018,
+   "n": 11
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "prev",
+   "salary": 1925,
+   "n": 24
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "recent",
+   "salary": 1931,
+   "n": 18
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "서울",
+   "region_slug": "seoul",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "prev",
+   "salary": 1792,
+   "n": 3
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "capital-area",
+   "hospital_type_slug": "clinic",
+   "region": "인천",
+   "region_slug": "incheon",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "prev",
+   "salary": 1845,
+   "n": 5
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "recent",
+   "salary": 1857,
+   "n": 13
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "prev",
+   "salary": 2132,
+   "n": 7
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "prev",
+   "salary": 2525,
+   "n": 1
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "recent",
+   "salary": 2225,
+   "n": 1
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "prev",
+   "salary": 1979,
+   "n": 14
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "recent",
+   "salary": 2072,
+   "n": 8
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "부산",
+   "region_slug": "busan",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "대구",
+   "region_slug": "daegu",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "울산",
+   "region_slug": "ulsan",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "hospital_type_slug": "clinic",
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "jeju-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "prev",
+   "salary": 1686,
+   "n": 4
+  },
+  {
+   "group_slug": "jeju-area",
+   "hospital_type_slug": "general-hospital",
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "recent",
+   "salary": 1492,
+   "n": 2
+  },
+  {
+   "group_slug": "jeju-area",
+   "hospital_type_slug": "clinic",
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "prev",
+   "salary": null,
+   "n": 0
+  },
+  {
+   "group_slug": "jeju-area",
+   "hospital_type_slug": "clinic",
+   "region": "제주",
+   "region_slug": "jeju",
+   "period": "recent",
+   "salary": null,
+   "n": 0
+  }
+ ],
+ "salary_monthly": [
+  {
+   "year": 2024,
+   "month": 1,
+   "salary": 1903
+  },
+  {
+   "year": 2024,
+   "month": 2,
+   "salary": 1933
+  },
+  {
+   "year": 2024,
+   "month": 3,
+   "salary": 1921
+  },
+  {
+   "year": 2024,
+   "month": 4,
+   "salary": 1860
+  },
+  {
+   "year": 2024,
+   "month": 5,
+   "salary": 1939
+  },
+  {
+   "year": 2024,
+   "month": 6,
+   "salary": 1951
+  },
+  {
+   "year": 2024,
+   "month": 7,
+   "salary": 1931
+  },
+  {
+   "year": 2024,
+   "month": 8,
+   "salary": 1886
+  },
+  {
+   "year": 2024,
+   "month": 9,
+   "salary": 1847
+  },
+  {
+   "year": 2024,
+   "month": 10,
+   "salary": 1876
+  },
+  {
+   "year": 2024,
+   "month": 11,
+   "salary": 1857
+  },
+  {
+   "year": 2024,
+   "month": 12,
+   "salary": 1912
+  },
+  {
+   "year": 2025,
+   "month": 1,
+   "salary": 1934
+  },
+  {
+   "year": 2025,
+   "month": 2,
+   "salary": 1949
+  },
+  {
+   "year": 2025,
+   "month": 3,
+   "salary": 1971
+  },
+  {
+   "year": 2025,
+   "month": 4,
+   "salary": 1968
+  },
+  {
+   "year": 2025,
+   "month": 5,
+   "salary": 1942
+  },
+  {
+   "year": 2025,
+   "month": 6,
+   "salary": 2002
+  },
+  {
+   "year": 2025,
+   "month": 7,
+   "salary": 1875
+  },
+  {
+   "year": 2025,
+   "month": 8,
+   "salary": 1940
+  },
+  {
+   "year": 2025,
+   "month": 9,
+   "salary": 1915
+  },
+  {
+   "year": 2025,
+   "month": 10,
+   "salary": 1977
+  },
+  {
+   "year": 2025,
+   "month": 11,
+   "salary": 1988
+  },
+  {
+   "year": 2025,
+   "month": 12,
+   "salary": 1888
+  },
+  {
+   "year": 2026,
+   "month": 1,
+   "salary": 1933
+  },
+  {
+   "year": 2026,
+   "month": 2,
+   "salary": 1885
+  },
+  {
+   "year": 2026,
+   "month": 3,
+   "salary": 1977
+  }
+ ],
+ "demand_yoy": [
+  {
+   "group_slug": "capital-area",
+   "region": "서울",
+   "region_slug": "seoul",
+   "direction": "down",
+   "pct": 50.0
+  },
+  {
+   "group_slug": "capital-area",
+   "region": "경기",
+   "region_slug": "gyeonggi",
+   "direction": "down",
+   "pct": 79.6
+  },
+  {
+   "group_slug": "capital-area",
+   "region": "인천",
+   "region_slug": "incheon",
+   "direction": "down",
+   "pct": 25.0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "region": "부산",
+   "region_slug": "busan",
+   "direction": "up",
+   "pct": 160.0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "region": "대구",
+   "region_slug": "daegu",
+   "direction": "down",
+   "pct": 100.0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "region": "경남",
+   "region_slug": "gyeongnam",
+   "direction": "flat",
+   "pct": 0.0
+  },
+  {
+   "group_slug": "yeongnam-area",
+   "region": "경북",
+   "region_slug": "gyeongbuk",
+   "direction": "down",
+   "pct": 42.9
+  },
+  {
+   "group_slug": "jeju-area",
+   "region": "제주",
+   "region_slug": "jeju",
+   "direction": "down",
+   "pct": 50.0
+  }
+ ],
+ "warnings": [
+  "salary_summary_clinic 없음 (템플릿 구버전) → fig3_*_clinic 값으로 대체",
+  "월별 급여 2026-04 값(2048)은 분석 기간 밖이라 제외"
+ ]
+}

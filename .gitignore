@@ -1,0 +1,6 @@
+# Obsidian 개인 설정 (혼자 사용)
+.obsidian/
+.trash/
+# Python
+__pycache__/
+*.pyc
